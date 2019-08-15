@@ -10,14 +10,14 @@
 
 		<view class='flex'>
 			<view v-for='(r, i) in board' :key='i' class='row'>
-				<view class='cell' v-for='(c, j) in r' :key='j' :class="{empty: board[i][j] === ' ', selected: i === selectedX && j === selectedY}" @click='inputNum(i, j)'>
+				<view class='cell' v-for='(c, j) in r' :key='j' :class="{empty: board[i][j] === ' ', selected: i === selectedX && j === selectedY}" @click='clickGrid(i, j)'>
 					{{c}}
 				</view>
 			</view>
 		</view>
 
 		<view class='input-row'>
-			<view class='input-num' v-for='(i, k) in numbers' :key='k'>{{i}}</view>
+			<view class='input-num' v-for='(i, k) in numbers' :key='k' @click='handleNumBtn(i)'>{{i}}</view>
 		</view>
 
 		<view class='bottom'>
@@ -37,25 +37,39 @@
 					[' ', ' ', '4', ' '],
 					[' ', '2', '3', ' ']
 				],
-				notEmptyPos: [],
+				initPos: [],
 				numbers: [1, 2, 3, 4, "X"],
 				selectedX: -1,
 				selectedY: -1,
 			};
 		},
 		methods: {
-			inputNum(i, j) {
-					console.log(i, j)
-					this.selectedX = i
-					this.selectedY = j
-			} 
+			clickGrid(i, j) {
+        // console.log(this.initPos)
+        if (this.initPos.includes(`${i},${j}`)) {
+          return
+        }
+				this.selectedX = i
+				this.selectedY = j
+			},
+      handleNumBtn(i) {
+        if (this.selectedX === -1 || this.selectedY === -1) {
+          return
+        }
+        this.board[this.selectedX][this.selectedY] = i === 'X' ? ' ' : i
+        this.selectedX = -1
+        this.selectedY = -1
+        checkIsPassGame()
+      },
+      checkIsPassGame() {
+        
+      }
 		},
 		onLoad() {
-			console.log('hello')
 			for (let i = 0; i < this.board.length; i++) {
 				for (let j = 0; j < this.board[i].length; j++) {
 					if ((this.board[i][j]) !== ' ') {
-						this.notEmptyPos.push([i, j])
+						this.initPos.push(`${i},${j}`)
 					}
 				}
 			}
